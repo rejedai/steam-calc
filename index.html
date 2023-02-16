@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Steam тенге калькулятор</title>
+</head>
+<body onload="on_load()">
+<div style="position: absolute; margin: auto; width: 800px; top:0; bottom: 0; left: 0; right: 0;">
+    <h3>Курсы вне steam</h3>
+    <div>
+        <label style="width:200px;display:inline-block;"><b>Оффициальный курс:</b></label>
+        <input id="official_rub" size="3" onblur="recalculate()">
+        <label><b>RUB</b> = </label>
+        <input id="official_kzt" size="3" onblur="recalculate()">
+        <label><b>KZT</b></label>
+    </div>
+    <div>
+        <label style="width:200px;display:inline-block;"><b>Курс steam:</b></label>
+        <input id="steam_rub" size="3" onblur="recalculate()">
+        <label><b>RUB</b> = </label>
+        <input id="steam_kzt" size="3" onblur="recalculate()">
+        <label><b>KZT</b></label>
+    </div>
+    <div>
+        <label style="width:200px;display:inline-block;"><b>Курс qiwi:</b></label>
+        <input id="qiwi_rub" size="3" onblur="recalculate()">
+        <label><b>RUB</b> = </label>
+        <input id="qiwi_kzt" size="3" onblur="recalculate()">
+        <label><b>KZT</b></label>
+    </div>
+    <h4 id="add_new">Пердметы рубли во внешнем магазине, тенге на торговой площадке steam</h4>
+
+    <h3 style="margin-top: 60px;">Стоимость игры</h3>
+    <div>
+        <label style="width:200px;display:inline-block;"><b>Цена в тенге:</b></label>
+        <input id="game_price" size="3" onblur="recalculate()">
+        <label><b>KZT</b></label>
+    </div>
+
+    <h3 style="margin-top: 60px;">Получится в steam</h3>
+    <div>
+        <label style="width:200px;display:inline-block;"><b>Идеальный офф курс:</b></label>
+        <label><b id="official_out"></b></label>
+    </div>
+    <div>
+        <label style="width:200px;display:inline-block;"><b>Идеальный steam курс:</b></label>
+        <label><b id="steam_out"></b></label>
+    </div>
+    <div>
+        <label style="width:200px;display:inline-block;"><b>qiwi(10%):</b></label>
+        <label><b id="qiwi_10_out"></b></label>
+    </div>
+    <h4 id="custom_items">Прeдметы (c 15% комиссией):</h4>
+</div>
+
+<script>
+    const item_count = 5
+
+    function get_float(str_val) {
+        return parseFloat(str_val.replace(",", ".").replace(/[^\d.]/g,''))
+    }
+
+    function on_load() {
+        document.getElementById("official_rub").value = 0.1503;
+        document.getElementById("official_kzt").value = 1;
+
+        document.getElementById("steam_rub").value = 149.34;
+        document.getElementById("steam_kzt").value = 1000.10;
+
+        document.getElementById("qiwi_rub").value = 1.60;
+        document.getElementById("qiwi_kzt").value = 10;
+
+        for(let number = item_count; number > 0; number--)
+            document.getElementById("add_new").insertAdjacentHTML('afterend', "<div>\n" +
+                "    <label style=\"width:200px;display:inline-block;\"><b>Предмет " +number +":</b></label>\n" +
+                "    <input id=\"item" + number + "_rub\" size=\"2\" onblur=\"recalculate()\">\n" +
+                "    <label><b>RUB</b> = </label>\n" +
+                "    <input id=\"item" + number + "_steam\" size=\"2\" onblur=\"recalculate()\">\n" +
+                "    <label><b>KZT</b></label>\n" +
+                "    <input style=\"margin-left: 20px;\">\n" +
+                "</div>")
+
+        for(let number = item_count; number > 0; number--)
+            document.getElementById("custom_items").insertAdjacentHTML('afterend', "<div>\n" +
+                "    <label style=\"width:200px;display:inline-block;\"><b>Предмет " +number +":</b></label>\n" +
+                "    <label><b id=\"item" + number + "_out\"></b></label>\n" +
+                "</div>")
+
+        recalculate()
+    }
+
+    function set_out(elem_id, rate_rub, rate_kzt, game_price) {
+        let out_string = ""
+        let price_per_rub = (rate_kzt / rate_rub)
+
+        if(isNaN(game_price)) {
+            out_string = "1 RUB = " + price_per_rub.toFixed(2).toString() + " KZT"
+        } else {
+            out_string = (game_price / price_per_rub).toFixed(2).toString() + " RUB"
+        }
+
+        document.getElementById(elem_id).innerText = out_string
+    }
+
+    function recalculate() {
+
+        let game_price = get_float(document.getElementById("game_price").value)
+
+        let official_rub = get_float(document.getElementById("official_rub").value)
+        let official_kzt = get_float(document.getElementById("official_kzt").value)
+        let steam_rub = get_float(document.getElementById("steam_rub").value)
+        let steam_kzt = get_float(document.getElementById("steam_kzt").value)
+        let qiwi_rub = get_float(document.getElementById("qiwi_rub").value)
+        let qiwi_kzt = get_float(document.getElementById("qiwi_kzt").value)
+
+        set_out("official_out", official_rub, official_kzt, game_price)
+        set_out("steam_out", steam_rub, steam_kzt, game_price)
+        set_out("qiwi_10_out", qiwi_rub, qiwi_kzt * 0.9, game_price)
+
+        for(let number = 1; number <= item_count; number++){
+            let out_custom_rub = get_float(document.getElementById("item" + number + "_rub").value)
+            let out_custom_kzt = get_float(document.getElementById("item" + number + "_steam").value)
+
+            set_out("item" + number + "_out", out_custom_rub, out_custom_kzt * 0.85, game_price)
+        }
+
+    }
+</script>
+<style>
+    label {
+
+}
+</style>
+</body>
+</html>
