@@ -6,6 +6,13 @@
 </head>
 <body onload="on_load()">
 <div style="position: absolute; margin: auto; width: 800px; top:0; bottom: 0; left: 0; right: 0;">
+    <h3>Стоимость игры</h3>
+    <div>
+        <label style="width:200px;display:inline-block;"><b>Цена в тенге:</b></label>
+        <input id="game_price" size="3" onblur="recalculate()">
+        <label><b>KZT</b></label>
+    </div>
+
     <h3>Курсы вне steam</h3>
     <div>
         <label style="width:200px;display:inline-block;"><b>Оффициальный курс:</b></label>
@@ -28,16 +35,9 @@
         <input id="qiwi_kzt" size="3" onblur="recalculate()">
         <label><b>KZT</b></label>
     </div>
-    <h4 id="add_new">Пердметы рубли во внешнем магазине, тенге на торговой площадке steam</h4>
+    <h4 id="add_new">Прeдметы (рубли во внешнем магазине, тенге на торговой площадке steam)</h4>
 
-    <h3 style="margin-top: 60px;">Стоимость игры</h3>
-    <div>
-        <label style="width:200px;display:inline-block;"><b>Цена в тенге:</b></label>
-        <input id="game_price" size="3" onblur="recalculate()">
-        <label><b>KZT</b></label>
-    </div>
-
-    <h3 style="margin-top: 60px;">Получится в steam</h3>
+    <h3>Получится в steam</h3>
     <div>
         <label style="width:200px;display:inline-block;"><b>Идеальный офф курс:</b></label>
         <label><b id="official_out"></b></label>
@@ -130,6 +130,9 @@
         font-family: sans-serif;
         background-color: #232323;
         color: #e1e1e1;
+    }
+    h3 {
+        margin-top: 60px;
     }
     input {
         color: #efefef;
